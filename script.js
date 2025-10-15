@@ -16,7 +16,7 @@
           inputs[index - 1].value = '';
         }
       });
-    });
+    }); 
 
     // Auto focus on first input on load
     inputs[0].focus();
