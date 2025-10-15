@@ -1,22 +1,31 @@
-//your JS code here. If required.
- const inputs = document.querySelectorAll('.code');
+// Select all OTP input boxes
+const inputs = document.querySelectorAll('.code');
 
-    inputs.forEach((input, index) => {
-      input.addEventListener('input', (e) => {
-  input.value = input.value.replace(/[^0-9]/g, '');
-		  
-        if (e.target.value.length === 1 && index < inputs.length - 1) {
-          inputs[index + 1].focus();
-        }
-      });
+// Loop through each input
+inputs.forEach((input, index) => {
+  // Dynamically assign IDs for Cypress or other tests
+  input.id = `code-${index + 1}`;
 
-      input.addEventListener('keydown', (e) => {
-        if (e.key === 'Backspace' && !input.value && index > 0) {
-          inputs[index - 1].focus();
-          inputs[index - 1].value = '';
-        }
-      });
-    }); 
+  // Input event: allow only digits and auto-focus to next
+  input.addEventListener('input', (e) => {
+    // Remove anything that's not a number
+    input.value = input.value.replace(/[^0-9]/g, '');
 
-    // Auto focus on first input on load
-    inputs[0].focus();
+    // Move to next input automatically if current input is filled
+    if (input.value && index < inputs.length - 1) {
+      inputs[index + 1].focus();
+    }
+  });
+
+  // Keydown event: handle backspace to move focus to previous
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Backspace' && !input.value && index > 0) {
+      inputs[index - 1].focus();
+      inputs[index - 1].value = ''; // Optional: clear previous input
+    }
+  });
+});
+
+// Auto-focus on the first input when page loads
+inputs[0].focus();
+
