@@ -3,6 +3,8 @@
 
     inputs.forEach((input, index) => {
       input.addEventListener('input', (e) => {
+  input.value = input.value.replace(/[^0-9]/g, '');
+		  
         if (e.target.value.length === 1 && index < inputs.length - 1) {
           inputs[index + 1].focus();
         }
