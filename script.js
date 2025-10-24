@@ -1,50 +1,52 @@
 // Select all OTP input boxes
-// Select all input fields inside the box
-const inputs = document.querySelectorAll('.box input');
+const inputs = document.querySelectorAll('.code-container input.code');
 
+// Loop through each input box and add event listeners
 inputs.forEach((input, index) => {
     input.addEventListener('keydown', (e) => {
-        // Allow only digits
-        if ((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        // Allow only digits and backspace
+        if ((e.key >= '0' && e.key <= '9') || e.key === 'Backspace') {
+
+            // Handle backspace
             if (e.key === 'Backspace') {
-                e.preventDefault(); // Prevent default behavior
-                input.value = ''; // Clear current input
-                // Move focus to previous input if exists
+                input.value = '';
                 if (index > 0) {
-                    inputs[index - 1].focus();
+                    inputs[index - 1].focus(); // move focus backward
                 }
-            } else if (e.key >= '0' && e.key <= '9') {
-                input.value = ''; // Replace the current value
+            } 
+            // Handle number input
+            else {
+                input.value = e.key;
+                if (index < inputs.length - 1) {
+                    inputs[index + 1].focus(); // move focus forward
+                }
+                e.preventDefault(); // prevent duplicate value
             }
         } else {
-            e.preventDefault(); // Prevent non-digit input
+            e.preventDefault(); // block invalid keys
         }
     });
 
-    input.addEventListener('input', (e) => {
-        const value = input.value;
-        if (value.length > 0 && index < inputs.length - 1) {
+    // Optional: move to next automatically on input (for mobile)
+    input.addEventListener('input', () => {
+        if (input.value.length === 1 && index < inputs.length - 1) {
             inputs[index + 1].focus();
         }
     });
 
+    // Optional: allow pasting full OTP
     input.addEventListener('paste', (e) => {
         e.preventDefault();
-        const pasteData = e.clipboardData.getData('text').trim().slice(0, inputs.length - index);
+        const pasteData = e.clipboardData.getData('text').trim().slice(0, inputs.length);
         for (let i = 0; i < pasteData.length; i++) {
-            if (inputs[index + i]) {
-                inputs[index + i].value = pasteData[i];
-            }
+            if (inputs[i]) inputs[i].value = pasteData[i];
         }
-        const nextIndex = index + pasteData.length < inputs.length ? index + pasteData.length : inputs.length - 1;
+        const nextIndex = Math.min(pasteData.length, inputs.length - 1);
         inputs[nextIndex].focus();
     });
 });
 
 // Automatically focus the first input on page load
 window.addEventListener('load', () => {
-    inputs[0].focus();
+    if (inputs.length > 0) inputs[0].focus();
 });
-
-
-
